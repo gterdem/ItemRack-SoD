@@ -81,4 +81,6 @@ For issues with this Season of Discovery fork, open an issue on the [GitHub repo
 
 ## License
 
-This addon maintains the same license as the original ItemRack Classic.
+**Public Domain.** This addon is dedicated to the public domain via [The Unlicense](LICENSE) — the same public-domain status as the original ItemRack Classic by Gello. Do whatever you like with it.
+
+Bundled libraries under `Libs/` (LibStub, CallbackHandler, LibDataBroker, LibDBIcon) retain their own respective licenses.
