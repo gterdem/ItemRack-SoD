@@ -153,6 +153,12 @@ function ItemRackOpt.OnLoad(self)
 
 	ItemRackOptFrameTitle:SetText("IR "..ItemRack.Version)
 
+	-- The rune-reminder shortcut (title bar, by the close button) is only useful on Season of
+	-- Discovery engraving characters. Engraving availability is fixed for the session, so gate once.
+	if not ItemRack.IsEngravingActive() then
+		ItemRackOptRunesButton:Hide()
+	end
+
 	-- OptInfo: this table drives the scrollable options. must be defined after xml defined (so buttons are non-nil)
 	-- type = "label", "check", "number", "slider", "button" : what type of option element
 	-- optset = ItemRackUser or ItemRackSettings : which table setting exists in
@@ -205,7 +211,7 @@ function ItemRackOpt.OnLoad(self)
 		{type="check",optset=ItemRackSettings,variable="HideTradables",label="Hide tradables",tooltip="Prevent tradable items from showing up in the menu."},
 		{type="check",optset=ItemRackSettings,variable="DisableAltClick",label="Disable Alt+Click",tooltip="Alt+Click on buttons dragged from the character sheet toggles auto queue for that slot.  Check this to disable that behavior. (ie to use Alt+click to self cast instead.)",combatlock=1},
 		{type="check",optset=ItemRackSettings,variable="SwapSpecWithSet",label="Switch spec on set equip",tooltip="When you equip a gear set linked to a talent spec (Primary/Secondary Talent in the Sets tab), also switch to that talent spec.\nOff by default.  Talents cannot be switched in combat."},
-		{type="check",optset=ItemRackSettings,variable="RunesWithSet",label="Rune reminders on set equip",tooltip="When you equip a gear set, remind you if your engraved runes (Season of Discovery) differ from the set's saved runes, with a click-to-apply button.\nOff by default.  Requires SoD engraving; runes apply one at a time and not in combat."},
+		{type="check",optset=ItemRackSettings,variable="RunesWithSet",label="Rune reminders on set equip",tooltip="When you equip a gear set, remind you if your engraved runes (Season of Discovery) differ from the set's saved runes, with a click-to-apply button.\nOn by default; dormant unless you're on a SoD engraving character.  Runes apply one at a time and not in combat."},
 
 		{type="label",label="Cooldown Settings"},
 		{type="check",optset=ItemRackSettings,variable="Notify",label="Notify when ready",tooltip="Announce when an item you used comes off cooldown."},
@@ -417,6 +423,8 @@ function ItemRackOpt.ButtonOnClick(self)
 		ItemRackOpt.ValidateSetButtons()
 	elseif button=="ItemRackOptSetsBindButton" then
 		ItemRackOpt.BindSet()
+	elseif button=="ItemRackOptRunesButton" then
+		ItemRack.OpenRuneReminder()
 	elseif button=="ItemRackOptSetsDropDownButton" then
 		ItemRackOptSubFrame5:Show()
 	elseif button=="ItemRackOptSetListClose" then

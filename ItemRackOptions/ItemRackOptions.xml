@@ -1148,6 +1148,28 @@
 				</PushedTexture>
 			</Button>
 
+			<!-- Rune reminder shortcut: small icon in the title bar, just left of the close (X)
+			     button, on every tab. Top-level (sibling of the close button) so it stays visible
+			     across tab switches; hidden on non-engraving characters by ItemRackOpt.OnLoad. -->
+			<Button name="ItemRackOptRunesButton" inherits="ItemRackSmallButtonTemplate">
+				<Size>
+					<AbsDimension x="16" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="ItemRackOptClose" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-6" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<NormalTexture file="Interface\Icons\INV_Misc_Rune_06">
+					<TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
+				</NormalTexture>
+				<PushedTexture file="Interface\Icons\INV_Misc_Rune_06">
+					<TexCoords left="0.12" right="0.88" top="0.12" bottom="0.88"/>
+				</PushedTexture>
+			</Button>
+
 			<!-- Events frame -->
 			<Frame name="ItemRackOptSubFrame3" inherits="ItemRackOptSubFrameTemplate">
 				<Layers>
@@ -1789,7 +1811,6 @@
 						</Anchors>
 					</Button>
 
-					
 					<!-- 1. Helm (Top of Left Column, Negative Margin) -->
 					<CheckButton name="ItemRackOptShowHelm" inherits="ItemRackTristateTemplate">
 						<Anchors>

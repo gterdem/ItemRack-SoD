@@ -1,12 +1,14 @@
-# ItemRack - Season of Discovery - Release v1.1.0
+# ItemRack - Season of Discovery - Release v1.1.1
 
-Adds Season of Discovery **rune integration** — sets now remember their engraved runes and can remind you (with a click-to-apply helper) when they don't match.
+Quality-of-life polish for the Season of Discovery **rune integration** — easier to reach, on by default.
 
 ---
 
 ### ✨ Added
-* **Rune reminders on set equip** (opt-in, Config tab, **off by default**): when you equip a gear set whose engraved runes differ from what the set saved, ItemRack shows a reminder listing each slot's `current → target` rune with a **click-to-apply** button. Runes engrave one at a time and not in combat (a game restriction), so each click applies the next rune.
-* Rune **icons** on the Sets-tab item cells (and rune names in their tooltips), so you can see which rune each set piece carries.
-* **`/itemrack runes`** — reopen the reminder for your current set.
+* **Rune button in Options**: A small **rune icon button** in the top-right of the Options window (just left of the close button, on every tab) reopens the rune reminder for your currently equipped set — no console command needed. Hidden on non-engraving characters.
+
+### 🔧 Changed
+* **Rune reminders are now on by default.** The "Rune reminders on set equip" option defaults to **on** (dormant unless you're on a Season of Discovery engraving character). Existing installs keep whatever they had set.
+* `/itemrack` help now lists the `/itemrack runes` command.
 
 _Requires Season of Discovery engraving; dormant on other clients._
