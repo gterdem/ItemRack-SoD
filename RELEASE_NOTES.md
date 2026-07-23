@@ -1,15 +1,12 @@
-# ItemRack - Season of Discovery - Release v1.0.0
+# ItemRack - Season of Discovery - Release v1.1.0
 
-Re-founded as a **Season of Discovery-only** addon, forked from the ItemRack Anniversary port. This release targets patch **1.15.9** (Interface `11509`).
+Adds Season of Discovery **rune integration** — sets now remember their engraved runes and can remind you (with a click-to-apply helper) when they don't match.
 
 ---
 
 ### ✨ Added
-* **Optional spec switch on set equip**: New "Switch spec on set equip" option (Config tab). When enabled, equipping a gear set linked to a talent spec also switches to that spec; when off (**the default**), equipping a spec-linked set changes only your gear. Talents are never switched in combat — the swap is skipped with a message.
+* **Rune reminders on set equip** (opt-in, Config tab, **off by default**): when you equip a gear set whose engraved runes differ from what the set saved, ItemRack shows a reminder listing each slot's `current → target` rune with a **click-to-apply** button. Runes engrave one at a time and not in combat (a game restriction), so each click applies the next rune.
+* Rune **icons** on the Sets-tab item cells (and rune names in their tooltips), so you can see which rune each set piece carries.
+* **`/itemrack runes`** — reopen the reminder for your current set.
 
-### 🔄 Changed
-* **Season of Discovery only**: Interface set to `11509` (patch 1.15.9). Removed The Burning Crusade Classic (`20505`/`20506`), Wrath, and Cataclysm support and their version branches (`IsBCC`/`IsWrath`/`IsCata`), including the Wrath-only Titan's Grip handling.
-* **Fresh release lineage**: Version reset to `1.0.0`; rebranded from "Anniversary" to "Season of Discovery". Removed the old CurseForge project ID pending a new Season of Discovery project.
-
-### 🐛 Fixed
-* **Dual-spec now works on Season of Discovery**: The talent-group events `ACTIVE_TALENT_GROUP_CHANGED` and `PLAYER_TALENT_UPDATE` were previously registered only on Wrath, leaving ItemRack's dual-spec set-swapping inert on SoD. They are now registered unconditionally, so equipping a set on a spec change works once dual spec is purchased.
+_Requires Season of Discovery engraving; dormant on other clients._

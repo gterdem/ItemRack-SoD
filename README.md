@@ -44,6 +44,13 @@ SoD adds dual talent specialization at level 40, and ItemRack ties your gear to 
 2. When you switch specs, ItemRack automatically equips the linked set.
 3. **Optional reverse direction:** enable **"Switch spec on set equip"** (Config tab) to also switch talents when you equip a spec-linked set. This is **off by default**, so equipping a set normally changes only your gear. Talents are never switched in combat — the swap is skipped with a message.
 
+### 🔮 Rune Integration (Season of Discovery)
+Dual-spec (and gear swaps) don't move your engraved **runes** — ItemRack helps close that gap:
+
+1. Sets automatically **remember the runes** on their engravable pieces when saved. In **Options → Sets**, each item cell shows a small **rune icon** (top-right), and its rune name in the tooltip.
+2. Enable **"Rune reminders on set equip"** (Config tab, **off by default**). When you equip a set whose runes differ from what's engraved, a popup lists each slot's `current → target` rune with a **click-to-apply** button.
+3. Runes engrave **one at a time** and **not in combat** (a game restriction), so the button applies the next rune per click. Type **`/itemrack runes`** to reopen the reminder for your current set.
+
 ### 📋 Gear Sets
 - Save the items you want, pick an icon and a name, then **Save**.
 - Show/hide helm and cloak per set.

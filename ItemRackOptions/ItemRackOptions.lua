@@ -108,6 +108,15 @@ function ItemRackOpt.InvOnEnter(self)
 	ItemRack.DockWindows(menuDock,_G["ItemRackOptInv"..id],mainDock,menuOrient)
 	ItemRack.BuildMenu(id,ItemRackSettings.EquipOnSetPick=="OFF" and 1)
 	ItemRack.IDTooltip(self,ItemRackOpt.Inv[id].id)
+	-- Season of Discovery: append the item's saved rune to the tooltip.
+	if ItemRackSettings.ShowTooltips=="ON" and ItemRack.GetSetRuneID then
+		local runeID = ItemRack.GetSetRuneID(ItemRackOpt.Inv[id].id)
+		local runeName = runeID and runeID ~= 0 and ItemRack.GetRuneName(runeID)
+		if runeName then
+			GameTooltip:AddLine("Rune: "..runeName, 0.6, 0.82, 1)
+			GameTooltip:Show()
+		end
+	end
 end
 
 function ItemRackOpt.InvOnLeave(self)
@@ -196,6 +205,7 @@ function ItemRackOpt.OnLoad(self)
 		{type="check",optset=ItemRackSettings,variable="HideTradables",label="Hide tradables",tooltip="Prevent tradable items from showing up in the menu."},
 		{type="check",optset=ItemRackSettings,variable="DisableAltClick",label="Disable Alt+Click",tooltip="Alt+Click on buttons dragged from the character sheet toggles auto queue for that slot.  Check this to disable that behavior. (ie to use Alt+click to self cast instead.)",combatlock=1},
 		{type="check",optset=ItemRackSettings,variable="SwapSpecWithSet",label="Switch spec on set equip",tooltip="When you equip a gear set linked to a talent spec (Primary/Secondary Talent in the Sets tab), also switch to that talent spec.\nOff by default.  Talents cannot be switched in combat."},
+		{type="check",optset=ItemRackSettings,variable="RunesWithSet",label="Rune reminders on set equip",tooltip="When you equip a gear set, remind you if your engraved runes (Season of Discovery) differ from the set's saved runes, with a click-to-apply button.\nOff by default.  Requires SoD engraving; runes apply one at a time and not in combat."},
 
 		{type="label",label="Cooldown Settings"},
 		{type="check",optset=ItemRackSettings,variable="Notify",label="Notify when ready",tooltip="Announce when an item you used comes off cooldown."},
@@ -343,10 +353,31 @@ function ItemRackOpt.UpdateInv()
 		else
 			icon:SetVertexColor(.25,.25,.25)
 		end
+		-- Season of Discovery: overlay the item's saved rune icon (top-right of the cell).
+		ItemRackOpt.UpdateInvRune(i, item)
 	end
 	ItemRackOpt.PopulateInvIcons()
 	ItemRackOpt.ValidateSetButtons()
 	ItemRackOptSetsCurrentSetIcon:SetTexture(ItemRackOpt.selectedIcon)
+end
+
+-- Overlay the saved rune's icon on an item cell's top-right corner (SoD only; dormant otherwise).
+function ItemRackOpt.UpdateInvRune(i, button)
+	local runeID = ItemRack.GetSetRuneID and ItemRack.GetSetRuneID(ItemRackOpt.Inv[i].id)
+	local icon = runeID and runeID ~= 0 and ItemRack.GetRuneIcon and ItemRack.GetRuneIcon(runeID)
+	if icon then
+		if not button.RuneOverlay then
+			local t = button:CreateTexture(nil, "OVERLAY", nil, 7)
+			t:SetSize(13, 13)
+			t:SetPoint("TOPRIGHT", button, "TOPRIGHT", -1, -1)
+			t:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+			button.RuneOverlay = t
+		end
+		button.RuneOverlay:SetTexture(icon)
+		button.RuneOverlay:Show()
+	elseif button.RuneOverlay then
+		button.RuneOverlay:Hide()
+	end
 end
 
 function ItemRackOpt.ToggleInvSelect(self)

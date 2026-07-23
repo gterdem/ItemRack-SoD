@@ -2,6 +2,14 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [1.1.0] - 2026-07-23
+
+### Added
+- **Season of Discovery rune reminders**: When you equip a gear set, ItemRack can compare the set's saved runes against what's currently engraved and pop a reminder with a **click-to-apply** button (one rune per click — runes cannot be applied silently or in combat). Opt-in via the new "Rune reminders on set equip" option (Config tab, off by default). Requires SoD engraving.
+  - The reminder lists each slot with its **rune name**.
+  - Item cells in the **Sets tab** show a small **rune-icon overlay** so you can see which rune each set piece is saved with.
+  - **`/itemrack runes`** re-opens the reminder for your current set (in case you closed it).
+
 ## [1.0.0] - 2026-07-23
 Re-founded as a Season of Discovery-only addon, forked from the ItemRack Anniversary port.
 

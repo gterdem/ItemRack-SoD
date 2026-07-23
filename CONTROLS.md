@@ -85,6 +85,7 @@ All 20 ItemRack equipment slots can be bound directly via the native WoW interfa
 | `/itemrack debug` | Toggles the diagnostic logging framework (Silent mode by default) |
 | `/itemrack debug chat` | Toggles printing the diagnostic traces to the main chat window |
 | `/itemrack dump` | Retrieves the session Event logs & active SV data into a copyable UI |
+| `/itemrack runes` | (Season of Discovery) Reopens the rune reminder for your current set if runes differ |
 | `/itemrack equip <set name>` | Equips the specified set |
 | `/itemrack toggle <set name>` | Toggles the specified set on/off |
 | `/itemrack toggle <set1>, <set2>` | Toggles between two sets |
@@ -135,6 +136,17 @@ If you try to swap items while in combat, ItemRack will:
 1. Queue the swap for when combat ends
 2. Show a small overlay icon on the slot button indicating what's queued
 3. Automatically perform the swap when you leave combat
+
+---
+
+## 🔮 Rune Reminders (Season of Discovery)
+
+Enable **"Rune reminders on set equip"** in the Config tab (off by default). When you equip a gear set whose engraved runes differ from what the set saved:
+
+1. A popup lists each slot's `current → target` rune with an **Apply** button.
+2. Because engraving requires a real click and runes apply **one at a time**, each click engraves the next rune (never in combat).
+3. Item cells in the **Sets** tab show a small **rune icon** (top-right) plus the rune name in the tooltip.
+4. Closed it by accident? Reopen with **`/itemrack runes`**.
 
 ---
 

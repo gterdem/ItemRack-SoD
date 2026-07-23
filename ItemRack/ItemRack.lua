@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v1.0.0-20260723"
+ItemRack.BuildID = "v1.1.0-20260723"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
@@ -174,6 +174,36 @@ do
 	end
 end
 
+-- [[ Season of Discovery Runes: set-integration helpers ]]
+-- Parse the ":runeid:<skillLineAbilityID>" suffix that AppendRuneID/GetID stores on each saved
+-- set slot. Returns the rune's skillLineAbilityID (0 = engravable but no rune), or nil if absent.
+function ItemRack.GetSetRuneID(idString)
+	if type(idString) ~= "string" then return nil end
+	local runeid = idString:match(":runeid:(%d+)$")
+	return runeid and tonumber(runeid) or nil
+end
+
+-- Compare a saved set's runes against what's currently engraved. Returns a list of
+-- { slot=, expected=, current= } for engravable slots where the set wants a specific rune
+-- (expected ~= 0) that isn't currently applied. Empty unless SoD engraving is active.
+function ItemRack.GetRuneMismatches(setname)
+	local mismatches = {}
+	if not ItemRack.IsEngravingActive() then return mismatches end
+	local set = ItemRackUser and ItemRackUser.Sets and ItemRackUser.Sets[setname]
+	if not set or not set.equip then return mismatches end
+	for slot = 0, 19 do
+		local expected = ItemRack.GetSetRuneID(set.equip[slot])
+		if expected and expected ~= 0 and C_Engraving.IsEquipmentSlotEngravable(slot) then
+			local info = C_Engraving.GetRuneForEquipmentSlot(slot)
+			local current = info and info.skillLineAbilityID or 0
+			if expected ~= current then
+				table.insert(mismatches, { slot = slot, expected = expected, current = current })
+			end
+		end
+	end
+	return mismatches
+end
+
 local GetContainerNumSlots, GetContainerItemLink, GetContainerItemID, GetContainerItemCooldown, GetContainerItemInfo, GetItemCooldown, PickupContainerItem, ContainerIDToInventoryID
 if C_Container then
 	GetContainerNumSlots = C_Container.GetContainerNumSlots
@@ -263,6 +293,7 @@ ItemRackSettings = {
 	ShowSetInTooltip = "OFF", -- whether to show set info in tooltips
 	DisableActionBarSound = "OFF", -- whether to silence Action Bar sounds
 	SwapSpecWithSet = "OFF", -- when equipping a set linked to a talent spec, also switch to that talent spec (off by default; cannot switch in combat)
+	RunesWithSet = "OFF", -- when equipping a set, remind (and offer to apply) its saved SoD runes if they differ from what's engraved (off by default)
 }
 
 ItemRack.NoTitansGrip = {
@@ -3602,6 +3633,8 @@ function ItemRack.SlashHandler(arg1)
 	elseif arg1=="unlock" then
 		ItemRackUser.Locked="OFF"
 		ItemRack.ReflectLock()
+	elseif arg1=="runes" then
+		ItemRack.OpenRuneReminder()
 	elseif arg1 and string.match(arg1, "^debug") then
 		local subcmd = string.match(arg1, "^debug%s+(.+)")
 		if subcmd == "chat" then
