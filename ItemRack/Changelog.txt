@@ -1,3 +1,7 @@
+__ New in 1.1.0 __
+- Added Season of Discovery rune reminders: equipping a set can remind you when your engraved runes differ from the set's saved runes, with a click-to-apply button (one rune per click, out of combat). Opt-in via "Rune reminders on set equip" (Config tab, off by default).
+- Rune reminder lists each slot with its rune name; Sets-tab item cells show a small rune-icon overlay; /itemrack runes re-opens the reminder for the current set.
+
 __ New in 1.0.0 - Season of Discovery fork by gterdem __
 - Re-founded ItemRack as a Season of Discovery-only addon (Interface 11509, patch 1.15.9).
 - Added optional "Switch spec on set equip" setting (Config tab, off by default). When on, equipping a spec-linked set also switches talents; talents are never switched in combat.

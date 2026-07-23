@@ -636,6 +636,16 @@ function ItemRack.EndSetSwap(setname)
 					end
 				end
 			end
+
+			-- Season of Discovery: if the equipped set's saved runes differ from what's
+			-- engraved, show a reminder with a click-to-apply button (opt-in; off by default).
+			-- Suppressed in combat (can't engrave then); use /itemrack runes afterward.
+			if ItemRackSettings.RunesWithSet=="ON" and not InCombatLockdown() and ItemRack.IsEngravingActive() and ItemRack.ShowRuneReminder then
+				local runeMismatches = ItemRack.GetRuneMismatches(setname)
+				if runeMismatches and #runeMismatches > 0 then
+					ItemRack.ShowRuneReminder(setname, runeMismatches)
+				end
+			end
 		elseif ItemRackUser.Sets[setname].oldset then
 			-- Internal set (e.g. ~Unequip, ~CombatQueue) finished restoring gear.
 			-- Set CurrentSet back to the set name stored in oldset.
