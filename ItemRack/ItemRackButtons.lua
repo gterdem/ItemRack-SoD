@@ -1,4 +1,4 @@
--- Compatibility shim for LoadAddOn (moved to C_AddOns in TBC 2.5.5+)
+-- Compatibility shim for LoadAddOn (accessed via the C_AddOns namespace on modern Classic Era)
 local LoadAddOn = LoadAddOn or (C_AddOns and C_AddOns.LoadAddOn)
 -- Compatibility shim for GetItemCount (moved to C_Item, may not have global if deprecation fallbacks off)
 local GetItemCount = GetItemCount or (C_Item and C_Item.GetItemCount)
@@ -299,7 +299,7 @@ function ItemRack.InitButtons()
 			button:SetAttribute("type",nil)
 			button:SetAttribute("type1","item")
 			button:SetAttribute("slot",i)
-			-- TBC Anniversary: Also set "item" attribute as string for SecureCmdItemParse
+			-- Classic Era: Also set "item" attribute as string for SecureCmdItemParse
 			button:SetAttribute("item", tostring(i))
 		else
 			button:SetAttribute("shift-slot*",ATTRIBUTE_NOOP)

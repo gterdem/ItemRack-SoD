@@ -28,7 +28,7 @@ _G["BINDING_NAME_CLICK ItemRackButton17:LeftButton"] = "Off Hand / Shield / Held
 _G["BINDING_NAME_CLICK ItemRackButton18:LeftButton"] = "Ranged / Wand / Thrown / Relic (Slot 18)"
 _G["BINDING_NAME_CLICK ItemRackButton19:LeftButton"] = "Tabard (Slot 19)"
 
--- Compatibility shims for addon management APIs (moved to C_AddOns in TBC 2.5.5+)
+-- Compatibility shims for addon management APIs (accessed via the C_AddOns namespace on modern Classic Era)
 local GetAddOnMetadata = GetAddOnMetadata or (C_AddOns and C_AddOns.GetAddOnMetadata)
 local EnableAddOn = EnableAddOn or (C_AddOns and C_AddOns.EnableAddOn)
 local DisableAddOn = DisableAddOn or (C_AddOns and C_AddOns.DisableAddOn)
@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v4.40.1-20260630"
+ItemRack.BuildID = "v1.0.0-20260723"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
@@ -109,7 +109,7 @@ if not GetNumTalentGroups and C_SpecializationInfo and C_SpecializationInfo.GetN
 	GetNumTalentGroups = C_SpecializationInfo.GetNumSpecGroups
 end
 
--- Compatibility shim for AuraUtil.FindAuraByName (may not exist in TBC 2.5.5)
+-- Compatibility shim for AuraUtil.FindAuraByName (may be unavailable on some Classic Era builds)
 if not AuraUtil or not AuraUtil.FindAuraByName then
 	AuraUtil = AuraUtil or {}
 	AuraUtil.FindAuraByName = function(name, unit, filter)
@@ -137,26 +137,6 @@ function ItemRack.IsClassic()
 		return true
 	end
 	return WOW_PROJECT_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-end
-
-function ItemRack.IsBCC()
-	-- TBC 2.5.5 Anniversary Edition: check TOC version (20000-29999) or project ID
-	if wowtoc >= 20000 and wowtoc < 30000 then
-		return true
-	end
-	return WOW_PROJECT_BURNING_CRUSADE_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
-end
-
-function ItemRack.IsWrath()
-	-- WotLK: TOC version 30000-39999
-	if wowtoc >= 30000 and wowtoc < 40000 then
-		return true
-	end
-	return WOW_PROJECT_WRATH_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
-end
-
-function ItemRack.IsCata()
-	return wowtoc >= 40000 and wowtoc < 50000
 end
 
 -- [[ Season of Discovery Runes ]]
@@ -282,6 +262,7 @@ ItemRackSettings = {
 	DisableSwapSound = "OFF", -- whether to silence audio when ItemRack automatically swaps gear
 	ShowSetInTooltip = "OFF", -- whether to show set info in tooltips
 	DisableActionBarSound = "OFF", -- whether to silence Action Bar sounds
+	SwapSpecWithSet = "OFF", -- when equipping a set linked to a talent spec, also switch to that talent spec (off by default; cannot switch in combat)
 }
 
 ItemRack.NoTitansGrip = {
@@ -292,11 +273,7 @@ ItemRack.NoTitansGrip = {
 
 ItemRack.Menu = {}
 ItemRack.LockList = {} -- index -2 to 11, flag whether item is tagged already for swap
-if ItemRack.IsClassic() then
-	ItemRack.BankSlots = { -1,5,6,7,8,9,10 }
-elseif ItemRack.IsBCC() or ItemRack.IsWrath() or ItemRack.IsCata() then
-	ItemRack.BankSlots = { -1,5,6,7,8,9,10,11 }
-end
+ItemRack.BankSlots = { -1,5,6,7,8,9,10 } -- Season of Discovery / Classic Era bank layout (7 slots)
 ItemRack.KnownItems = {} -- cache of known item locations for fast lookup
 
 ItemRack.SlotInfo = {
@@ -1107,16 +1084,6 @@ function ItemRack.UpdateClassSpecificStuff()
 		ItemRack.CanWearOneHandOffHand = 1
 	end
 
-	if ItemRack.IsWrath() and class=="WARRIOR" then
-		if select(5,GetTalentInfo(2,26))>0 then
-			ItemRack.HasTitansGrip = 1
-			ItemRack.SlotInfo[17].INVTYPE_2HWEAPON = 1
-		else
-			ItemRack.HasTitansGrip = nil
-			ItemRack.SlotInfo[17].INVTYPE_2HWEAPON = nil
-		end
-	end
-
 end
 
 function ItemRack.OnSetBagItem(tooltip, bag, slot)
@@ -1225,10 +1192,11 @@ function ItemRack.InitCore()
 	ItemRackFrame:RegisterEvent("BANKFRAME_CLOSED")
 	ItemRackFrame:RegisterEvent("BANKFRAME_OPENED")
 	ItemRackFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-	if ItemRack.IsWrath() then
-		ItemRackFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
-		ItemRackFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	end
+	-- Dual-spec / talent-group events. Season of Discovery supports dual spec via the
+	-- standard talent-group API (GetActiveTalentGroup / GetNumTalentGroups), so register
+	-- unconditionally; downstream handlers no-op when the character has a single talent group.
+	ItemRackFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+	ItemRackFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	-- ItemRackFrame:RegisterEvent("PET_BATTLE_OPENING_START")
 	-- ItemRackFrame:RegisterEvent("PET_BATTLE_CLOSE")
 	--if not disable_delayed_swaps then

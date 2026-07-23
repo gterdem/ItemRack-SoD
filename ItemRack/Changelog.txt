@@ -1,3 +1,10 @@
+__ New in 1.0.0 - Season of Discovery fork by gterdem __
+- Re-founded ItemRack as a Season of Discovery-only addon (Interface 11509, patch 1.15.9).
+- Added optional "Switch spec on set equip" setting (Config tab, off by default). When on, equipping a spec-linked set also switches talents; talents are never switched in combat.
+- Removed The Burning Crusade Classic (20505/20506), Wrath, and Cataclysm support and their version branches, including Wrath-only Titan's Grip handling.
+- Fixed dual-spec on Season of Discovery: talent-group events were only registered on Wrath, so set-swapping on a spec change did nothing on SoD. Now registered unconditionally.
+- Reset version to 1.0.0 and rebranded from "Anniversary" to "Season of Discovery".
+
 __ New in 4.40.1 - By Bl4ut0 __
 - Fixed a bug where quick-access buttons that had been toggled off (removed) would reappear as empty grey squares on login or character reload. Securely wrapped the button's Show() method to prevent external addons (like Masque) or Blizzard's internal Action Bar system from showing buttons that are not currently active in the user's layout.
 
