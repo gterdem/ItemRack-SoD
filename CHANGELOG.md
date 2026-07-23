@@ -2,8 +2,6 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
-## [Unreleased]
-
 ## [1.0.0] - 2026-07-23
 Re-founded as a Season of Discovery-only addon, forked from the ItemRack Anniversary port.
 
