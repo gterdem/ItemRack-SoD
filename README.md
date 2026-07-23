@@ -1,128 +1,83 @@
-# ItemRack - TBC Anniversary Edition
+# ItemRack - Season of Discovery
 
-A port of the classic ItemRack addon for **World of Warcraft: The Burning Crusade Classic Anniversary Edition (2.5.5)**.
+ItemRack for **World of Warcraft Classic: Season of Discovery** (patch 1.15.9, Interface `11509`). Manage your gear with sets, automated cooldown queues, event-based swaps, and dual-spec integration — driven from on-screen slot buttons and your character sheet.
+
+> **Season of Discovery only.** This is a fork that targets **only** WoW Classic: Season of Discovery. I maintain it for SoD simply because that's what I play. Support for The Burning Crusade / Wrath / Cataclysm Classic from the upstream Anniversary port has been **removed**. If you need those clients, use the original Anniversary version.
 
 ## Credits
 
-This addon is based on the original **ItemRack Classic** maintained by Rottenbeer and Roadblock:
+ItemRack has passed through many hands, and this fork stands on all of their work:
 
-🔗 **Original Addon:** [ItemRack Classic on CurseForge](https://www.curseforge.com/wow/addons/itemrack-classic)
-
-**Original Author:** Gello  
-**Classic Port:** Rottenbeer, Roadblock  
-**TBC Anniversary Port:** Bl4ut0
+- **Original Author:** Gello
+- **Classic Port:** Rottenbeer & Roadblock — [ItemRack Classic on CurseForge](https://www.curseforge.com/wow/addons/itemrack-classic)
+- **Anniversary (TBC) Port:** Bl4ut0
+- **Season of Discovery Fork:** gterdem
+- **Contributors:** UDrew, physixtential, and others (see [CHANGELOG.md](CHANGELOG.md))
 
 ## Installation
 
-1. Download the latest release from the [Releases page](https://github.com/Bl4ut0/ItemRack-TBC-Anniversary/releases)
-2. Extract the contents to your WoW addons folder:
+1. Download the latest release from the [Releases page](https://github.com/gterdem/ItemRack-SoD/releases).
+2. Extract into your WoW addons folder:
    ```
    World of Warcraft\_classic_era_\Interface\AddOns\
    ```
-3. You should have two folders:
-   - `ItemRack/`
-   - `ItemRackOptions/`
-4. **(Highly Recommended)** Install [LibSoundIndex](https://www.curseforge.com/wow/addons/libsoundindex) so that ItemRack can efficiently mute individual gear swap sound effects without affecting combat alerts or UI. If not installed, ItemRack will temporarily silence the game's Master SFX channel during a swap as a fallback.
-5. Restart WoW or type `/reload` if already in-game
-6. ItemRack should appear as equipment slot buttons on your character panel
+   You should end up with two folders: `ItemRack/` and `ItemRackOptions/`.
+3. *(Recommended)* Install [LibSoundIndex](https://www.curseforge.com/wow/addons/libsoundindex) so ItemRack can mute individual gear-swap sounds without silencing combat or UI audio. Without it, ItemRack briefly mutes the Master SFX channel during a swap as a fallback.
+4. Restart WoW or `/reload`. ItemRack appears as equipment-slot buttons on your character panel.
 
-## 🎮 Features & Usage
+**[📖 Complete Control Reference →](CONTROLS.md)** — every mouse click, keybind, and slash command.
 
-ItemRack allows you to manage your gear with extreme precision through sets, automated queues, and event-based triggers.
-
-**[📖 View Complete Control Reference](CONTROLS.md)** - Detailed guide to all mouse clicks, keybinds, and commands.
+## Features
 
 ### 🚀 Quick Access & Slot Buttons
-- **Open Options:** Type `/itemrack opt` or **Right-Click** the minimap button.
-- **Slot Buttons:** **Alt-Click** any item slot on your Character Sheet to create an on-screen "Quick Access" button for that slot.
-- **Use Item:** **Left-Click** a slot button to use the item (trinkets, on-use effects).
-- **Cycle Queue:** **Right-Click** a slot button to immediately swap to the next item in that slot's queue.
-- **Open Slot Menu:** Hover over a slot button to open the item selection flyout menu.
-- **Open Queue Options:** **Alt+Right-Click** a slot button to open the Queue configuration for that slot.
-- **Auto-Queue Toggle:** **Alt+Left-Click** an on-screen slot button to toggle the Auto-Queue system for that specific slot on/off.
+- **Open options:** `/itemrack opt` or right-click the minimap button.
+- **Create a slot button:** Alt-click any slot on your character sheet.
+- **Use item:** left-click a slot button (trinkets, on-use effects).
+- **Cycle queue:** right-click a slot button to swap to the next queued item.
+- **Slot menu:** hover a slot button for the item flyout.
+- **Auto-Queue toggle:** Alt+left-click a slot button.
 
-### ⚔️ Specialization Automation (Dual Spec)
-ItemRack now supports seamless gear-spec integration:
-1. Open the **Sets** tab in Options.
-2. Select or create a gear set.
-3. Check the **Primary Spec** or **Secondary Spec** box to link the set to your talent tree (e.g., "Holy", "Arms").
-4. ItemRack will automatically switch your gear when you change specializations.
-   - *Note:* A 0.5s stability timer prevents race conditions during the switch.
+### ⚔️ Dual-Spec Integration (Season of Discovery)
+SoD adds dual talent specialization at level 40, and ItemRack ties your gear to it:
 
-### 📋 Managing Gear Sets
-- **Saving Sets:** Select the items you want, choose an icon, enter a name, and click **Save**.
-- **Specialization Text:** Checkboxes now dynamically show your talent tree name if points are spent, making it easy to identify which set belongs to which build.
-- **Focus Preservation:** Saving or equipping sets no longer resets your UI scroll position—you stay right where you were editing.
+1. In **Options → Sets**, select a set and check **Primary Talent** or **Secondary Talent** to link it to a talent group.
+2. When you switch specs, ItemRack automatically equips the linked set.
+3. **Optional reverse direction:** enable **"Switch spec on set equip"** (Config tab) to also switch talents when you equip a spec-linked set. This is **off by default**, so equipping a set normally changes only your gear. Talents are never switched in combat — the swap is skipped with a message.
 
-### 🔄 Auto-Queue System
-The Auto-Queue system ensures you always have a "ready" item equipped:
-1. Click the **Queue** button (lightning bolt) in Options for a specific slot.
-2. Rank your items from top to bottom (Priority).
-3. When an equipped item goes on cooldown, ItemRack will automatically swap it for the highest priority item that is ready.
-4. **Pause Queue:** You can check "Pause Queue" on specific items to prevent them from being swapped out while in use.
-5. **Per-Set Queues:** Gear Sets automatically save and recall which slot queues are currently enabled when you equip them.
-6. **Burn on Use:** Burned queue items are now tracked by the exact queued item variant, so duplicate same-base items with different enchants, gems, or suffixes no longer burn each other.
+### 📋 Gear Sets
+- Save the items you want, pick an icon and a name, then **Save**.
+- Show/hide helm and cloak per set.
+- **Hide** a set to keep it out of the quick set menu (hold Alt to reveal hidden entries).
+
+### 🔄 Auto-Queue
+Keeps a "ready" item equipped:
+
+1. Open the **Queue** (lightning bolt) config for a slot and rank items by priority.
+2. When the equipped item goes on cooldown, ItemRack swaps to the highest-priority ready item.
+3. **Pause Queue** on specific items to keep them from being swapped out mid-use.
+4. Per-set queues are saved and recalled when you equip a set.
 
 ### ⚡ Events & Automation
-Events allow for complex automation based on game state:
-1. Go to the **Config** tab and ensure **Enable Events** is checked.
-2. Use the **Events** tab to link specific gear sets to triggers like:
-   - **Drinking/Eating:** Swap to spirit gear.
-   - **Mounting:** Swap to riding gear.
-   - **Zone Changes:** Swap gear when entering a specific raid or city.
-   - **Combat State:** Switch weapons or gear sets when entering/leaving combat.
-3. **Manual Overrides:** Manually picking a set actively overrides and suppresses background events that attempt to combat your choice. 
-4. **Event Tracking:** Use the **`/itemrack debug`** command to monitor which triggers are firing in real-time. This prints all background event logic and gear restorations directly to your chat window. (See the Diagnostic Debugging section below for more details).
+Link sets to game-state triggers (**Config → Enable Events**, then the **Events** tab):
 
-#### Script Event Compatibility
-Script events now have a stack-aware helper API:
-- `EquipEventSet("Set Name")`
-- `UnequipEventSet()`
+- Drinking/eating → spirit gear; mounting → riding gear; zone changes → per-zone gear; combat state → weapon or gear swaps.
+- Manually picking a set overrides background events until conditions change.
+- `/itemrack debug` shows which triggers fire in real time.
 
-Existing simple script events do **not** need to be rewritten if they use bare `EquipSet(...)` and `UnequipSet(...)` inside the script event editor. Those names are now shimmed onto the stack-aware event path automatically.
+**Script events** have a stack-aware helper API — `EquipEventSet("Set Name")` / `UnequipEventSet()`. Existing bare `EquipSet(...)` / `UnequipSet(...)` scripts keep working (they're shimmed onto the stack-aware path); prefer the new helpers going forward.
 
-Recommended migration for older scripts:
+### 🛠️ Diagnostics
+A built-in diagnostic export — no digging through `WTF` folders:
 
-Before:
-```lua
-EquipSet("My Set")
-UnequipSet("My Set")
-```
+1. `/itemrack debug` to enable logging.
+2. Reproduce the issue in-game.
+3. `/itemrack dump` opens a window with the last 500 actions, queue states, and any stuck API locks. `CTRL+C` copies an anonymized report to paste into a bug report.
 
-After:
-```lua
-EquipEventSet("My Set")
-UnequipEventSet()
-```
-
-Use the new helper names when editing or creating script events going forward. If a script intentionally calls `ItemRack.EquipSet(...)` or `ItemRack.UnequipSet(...)`, that remains the low-level escape hatch and is not automatically stack-managed.
-
-### 🛠️ Diagnostic Debugging Tools (New!)
-ItemRack now includes an incredibly powerful, native diagnostic system built directly into the UI. No more trying to find or zip `WTF` folders—if you experience a bug, you can instantly export exactly what is wrong.
-
-1. Turn on debugging: `/itemrack debug`
-2. Perform the action that breaks (e.g., mounting, entering combat).
-3. Type `/itemrack dump` to summon a native pop-up window containing the last 500 actions, queue states, and any stuck API locks.
-4. Hit `CTRL+C` in the text box to instantly copy the exact, anonymized diagnostic code and active `SavedVariables` state for easy sharing when reporting a bug.
-
-> [!IMPORTANT]
-> **Data Privacy Notice:** The `/itemrack dump` command retrieves technical data for debugging, which includes your gear set names, queue configurations, and recently equipped items. It does **not** collect passwords or sensitive account information. Please review the output before sharing if you wish to keep specific set names private.
-
-## TBC Anniversary Compatibility
-
-The TBC Anniversary Edition runs on a modern WoW client engine, which required several API compatibility fixes. See [TECHNICAL_CHANGES.md](TECHNICAL_CHANGES.md) for technical details and [CHANGELOG.md](CHANGELOG.md) for a summary of feature updates.
-
-### Key Changes
-- API namespace migrations (`C_Container`, `C_Item`, `C_AddOns`)
-- Button template compatibility fixes for secure action handling
-- **Visual Fix:** Resolved yellow triangle artifacts in Options Menu via texture cleanup
-- Deprecation fallback shims for critical functions
+> **Privacy:** the dump includes your set names, queue configs, and recently equipped items. It does **not** collect passwords or account data. Review it before sharing if any set names are sensitive.
 
 ## Support
 
-For issues specific to the TBC Anniversary port, please open an issue on this GitHub repository.
-
-For general ItemRack functionality questions, refer to the [original CurseForge page](https://www.curseforge.com/wow/addons/itemrack-classic).
+For issues with this Season of Discovery fork, open an issue on the [GitHub repository](https://github.com/gterdem/ItemRack-SoD). For general ItemRack usage, the [original CurseForge page](https://www.curseforge.com/wow/addons/itemrack-classic) is a good reference.
 
 ## License
 

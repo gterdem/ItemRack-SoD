@@ -195,6 +195,7 @@ function ItemRackOpt.OnLoad(self)
 		{type="check",optset=ItemRackSettings,variable="AllowHidden",label="Allow hidden items",tooltip="Enable Alt+clicking of menu items to hide/show them in the menu.  Hold Alt as you enter a menu to show all."},
 		{type="check",optset=ItemRackSettings,variable="HideTradables",label="Hide tradables",tooltip="Prevent tradable items from showing up in the menu."},
 		{type="check",optset=ItemRackSettings,variable="DisableAltClick",label="Disable Alt+Click",tooltip="Alt+Click on buttons dragged from the character sheet toggles auto queue for that slot.  Check this to disable that behavior. (ie to use Alt+click to self cast instead.)",combatlock=1},
+		{type="check",optset=ItemRackSettings,variable="SwapSpecWithSet",label="Switch spec on set equip",tooltip="When you equip a gear set linked to a talent spec (Primary/Secondary Talent in the Sets tab), also switch to that talent spec.\nOff by default.  Talents cannot be switched in combat."},
 
 		{type="label",label="Cooldown Settings"},
 		{type="check",optset=ItemRackSettings,variable="Notify",label="Notify when ready",tooltip="Announce when an item you used comes off cooldown."},

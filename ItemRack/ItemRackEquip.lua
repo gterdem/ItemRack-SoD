@@ -614,17 +614,20 @@ function ItemRack.EndSetSwap(setname)
 			ItemRackUser.CurrentSet = setname
 			C_Timer.After(0.5, ItemRack.UpdateCurrentSet)
 			
-			-- Dual Spec Support: Auto-Swap Spec if Set is bound
+			-- Dual Spec Support: Auto-Swap Spec if Set is bound to a talent spec.
+			-- Opt-in via the "Switch spec on set equip" option (ItemRackSettings.SwapSpecWithSet); off by default.
 			local set = ItemRackUser.Sets[setname]
-			if set.AssociatedSpec then
+			if set.AssociatedSpec and ItemRackSettings.SwapSpecWithSet=="ON" then
 				if GetActiveTalentGroup and GetNumTalentGroups then
 					local currentSpec = GetActiveTalentGroup()
 					local numGroups = GetNumTalentGroups()
 					local neededSpec = set.AssociatedSpec
 					
 					if numGroups > 1 and currentSpec ~= neededSpec then
-						ItemRack.Print("Set "..setname.." requires Spec "..neededSpec.." (Current: "..currentSpec.."). Switching...")
-						if SetActiveTalentGroup then
+						if InCombatLockdown() then
+							ItemRack.Print("Set '"..setname.."' is linked to spec "..neededSpec..", but talents can't be switched in combat. Keeping your current spec.")
+						elseif SetActiveTalentGroup then
+							ItemRack.Print("Set '"..setname.."' requires spec "..neededSpec.." (current: "..currentSpec.."). Switching talents...")
 							SetActiveTalentGroup(neededSpec)
 						end
 					else

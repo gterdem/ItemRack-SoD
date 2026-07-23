@@ -6,6 +6,8 @@ labels: bug
 assignees: ''
 ---
 
+> ⚠️ This addon supports **Season of Discovery / Classic Era (patch 1.15.x) only.** Bugs on TBC, Wrath, Cataclysm, or Retail are out of scope — please use the upstream Anniversary version for those clients.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -43,8 +45,8 @@ If you experienced a Lua error, please paste the full stack trace below. You can
 If applicable, add screenshots to help explain your problem.
 
 **Environment (please complete the following information):**
- - WoW Client Version: [e.g. TBC Anniversary 2.5.5, Classic Era 1.15]
- - ItemRack Version: [e.g. 4.24]
+ - WoW Client: Season of Discovery / Classic Era (patch 1.15.x)
+ - ItemRack Version: [e.g. 1.0.0]
  - Locale: [e.g. enUS, deDE]
 
 **Additional context**

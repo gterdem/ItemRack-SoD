@@ -1,4 +1,4 @@
--- Compatibility shim for LoadAddOn (moved to C_AddOns in TBC 2.5.5+)
+-- Compatibility shim for LoadAddOn (accessed via the C_AddOns namespace on modern Classic Era)
 local LoadAddOn = LoadAddOn or (C_AddOns and C_AddOns.LoadAddOn)
 
 -- Compatibility shim for loadstring (renamed to load in Lua 5.2+)
