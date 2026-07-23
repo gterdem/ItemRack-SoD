@@ -2,6 +2,15 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [1.1.1] - 2026-07-23
+
+### Added
+- **Rune button in Options**: A small **rune icon button** in the top-right of the Options window (just left of the close button, on every tab) reopens the rune reminder for your currently equipped set — no need to type `/itemrack runes`. It's hidden on non-engraving characters.
+
+### Changed
+- **Rune reminders are now on by default.** The "Rune reminders on set equip" option now defaults to **on** (it stays dormant unless you're on a Season of Discovery engraving character). Existing installs keep their saved setting.
+- `/itemrack` help now lists the `/itemrack runes` command.
+
 ## [1.1.0] - 2026-07-23
 
 ### Added

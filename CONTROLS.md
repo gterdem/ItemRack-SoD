@@ -141,12 +141,12 @@ If you try to swap items while in combat, ItemRack will:
 
 ## 🔮 Rune Reminders (Season of Discovery)
 
-Enable **"Rune reminders on set equip"** in the Config tab (off by default). When you equip a gear set whose engraved runes differ from what the set saved:
+Enable **"Rune reminders on set equip"** in the Config tab (on by default). When you equip a gear set whose engraved runes differ from what the set saved:
 
 1. A popup lists each slot's `current → target` rune with an **Apply** button.
 2. Because engraving requires a real click and runes apply **one at a time**, each click engraves the next rune (never in combat).
 3. Item cells in the **Sets** tab show a small **rune icon** (top-right) plus the rune name in the tooltip.
-4. Closed it by accident? Reopen with **`/itemrack runes`**.
+4. Closed it by accident? Reopen with the small **rune button** at the top-right of **Options** (left of the X), or **`/itemrack runes`**.
 
 ---
 

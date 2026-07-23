@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v1.1.0-20260723"
+ItemRack.BuildID = "v1.1.1-20260723"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
@@ -293,7 +293,7 @@ ItemRackSettings = {
 	ShowSetInTooltip = "OFF", -- whether to show set info in tooltips
 	DisableActionBarSound = "OFF", -- whether to silence Action Bar sounds
 	SwapSpecWithSet = "OFF", -- when equipping a set linked to a talent spec, also switch to that talent spec (off by default; cannot switch in combat)
-	RunesWithSet = "OFF", -- when equipping a set, remind (and offer to apply) its saved SoD runes if they differ from what's engraved (off by default)
+	RunesWithSet = "ON", -- when equipping a set, remind (and offer to apply) its saved SoD runes if they differ from what's engraved (on by default; dormant on non-engraving clients)
 }
 
 ItemRack.NoTitansGrip = {
@@ -367,6 +367,7 @@ ItemRack.TooltipInfo = {
 	{"ItemRackOptSetsSaveButton","Save Set","Save this set. Some settings like key binding, cloak/helm visibility and whether it's hidden can only be changed to a saved set."},
 	{"ItemRackOptSetsDeleteButton","Delete Set","Delete this set definition. If you want to remove it from the menu and may want it again in the future, check 'Hide' to the left."},
 	{"ItemRackOptSetsBindButton","Bind Key to Set","This will let you bind a key or key combination to equip a set."},
+	{"ItemRackOptRunesButton","Check Runes","Reopen the rune reminder for your currently equipped set. Season of Discovery only."},
 	{"ItemRackOptEventNew","New Event","Create a new event."},
 	{"ItemRackOptEventEdit","Edit Event","Edit this event. Note: if you edit the name and save, it will create a copy of the event with the new name."},
 	{"ItemRackOptEventDelete","Delete Event","If this event is enabled or has a set associated with it, it will remove the tags and drop it in the list.  If this is an untagged event, it will delete it entirely."},
@@ -3945,6 +3946,7 @@ function ItemRack.SlashHandler(arg1)
 		ItemRack.Print("/itemrack reset : resets buttons and their settings.")
 		ItemRack.Print("/itemrack reset everything : wipes ItemRack to default.")
 		ItemRack.Print("/itemrack lock/unlock : locks/unlocks the buttons.")
+		ItemRack.Print("/itemrack runes : reopens the rune reminder for your current set (Season of Discovery).")
 	end
 
 end

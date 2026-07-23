@@ -11,7 +11,7 @@ ItemRack has passed through many hands, and this fork stands on all of their wor
 - **Original Author:** Gello
 - **Classic Port:** Rottenbeer & Roadblock — [ItemRack Classic on CurseForge](https://www.curseforge.com/wow/addons/itemrack-classic)
 - **Anniversary (TBC) Port:** Bl4ut0
-- **Season of Discovery Fork:** gterdem
+- **Season of Discovery Fork:** Valermus
 - **Contributors:** UDrew, physixtential, and others (see [CHANGELOG.md](CHANGELOG.md))
 
 ## Installation
@@ -48,8 +48,8 @@ SoD adds dual talent specialization at level 40, and ItemRack ties your gear to 
 Dual-spec (and gear swaps) don't move your engraved **runes** — ItemRack helps close that gap:
 
 1. Sets automatically **remember the runes** on their engravable pieces when saved. In **Options → Sets**, each item cell shows a small **rune icon** (top-right), and its rune name in the tooltip.
-2. Enable **"Rune reminders on set equip"** (Config tab, **off by default**). When you equip a set whose runes differ from what's engraved, a popup lists each slot's `current → target` rune with a **click-to-apply** button.
-3. Runes engrave **one at a time** and **not in combat** (a game restriction), so the button applies the next rune per click. Type **`/itemrack runes`** to reopen the reminder for your current set.
+2. **"Rune reminders on set equip"** (Config tab, **on by default**) watches for this. When you equip a set whose runes differ from what's engraved, a popup lists each slot's `current → target` rune with a **click-to-apply** button. (Dormant unless you're on a SoD engraving character; uncheck it to disable.)
+3. Runes engrave **one at a time** and **not in combat** (a game restriction), so the button applies the next rune per click. Closed the panel? Reopen it with the small **rune button** in the top-right of **Options** (left of the close button), or type **`/itemrack runes`**.
 
 ### 📋 Gear Sets
 - Save the items you want, pick an icon and a name, then **Save**.
