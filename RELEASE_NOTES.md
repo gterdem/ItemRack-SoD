@@ -1,14 +1,10 @@
-# ItemRack - Season of Discovery - Release v1.1.1
+# ItemRack - Season of Discovery - Release v1.1.2
 
-Quality-of-life polish for the Season of Discovery **rune integration** — easier to reach, on by default.
+A compatibility bugfix for players using a bank addon (Bagnator, Bagnon, etc.).
 
 ---
 
-### ✨ Added
-* **Rune button in Options**: A small **rune icon button** in the top-right of the Options window (just left of the close button, on every tab) reopens the rune reminder for your currently equipped set — no console command needed. Hidden on non-engraving characters.
+### 🔧 Fixed
+* **Works alongside bank addons like Bagnator / Bagnon.** With such an addon installed, opening the bank and hovering an equipment slot could throw a Lua error (`IsInventorySlotEngravable ... outside of expected range`) on Season of Discovery. The rune scan now skips the bank's negative container indices — which are never engravable — so the item flyout builds cleanly with the bank open.
 
-### 🔧 Changed
-* **Rune reminders are now on by default.** The "Rune reminders on set equip" option defaults to **on** (dormant unless you're on a Season of Discovery engraving character). Existing installs keep whatever they had set.
-* `/itemrack` help now lists the `/itemrack runes` command.
-
-_Requires Season of Discovery engraving; dormant on other clients._
+_Season of Discovery engraving fix; no effect on non-engraving characters._

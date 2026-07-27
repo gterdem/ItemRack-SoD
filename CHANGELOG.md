@@ -2,6 +2,11 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [1.1.2] - 2026-07-26
+
+### Fixed
+- **Works alongside bank addons like Bagnator/Bagnon.** Opening the bank with such an addon and hovering an equipment slot could throw a Lua error (`IsInventorySlotEngravable ... outside of expected range`) on Season of Discovery. The rune scan now skips the bank's negative container indices, which are never engravable. No effect on non-engraving characters.
+
 ## [1.1.1] - 2026-07-23
 
 ### Added

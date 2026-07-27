@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v1.1.1-20260723"
+ItemRack.BuildID = "v1.1.2-20260726"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
@@ -148,6 +148,13 @@ do
 	if ItemRack.IsEngravingActive() then
 		function ItemRack.AppendRuneID(bag, slot)
 			if slot then
+				-- C_Engraving.IsInventorySlotEngravable expects an unsigned container index
+				-- (0..N); the bank main/reagent containers are negative (-1, -3) and would
+				-- error ("outside of expected range"). Those slots are never engravable, so
+				-- skip them. Surfaced when BuildMenu scans ItemRack.BankSlots with the bank open.
+				if bag < 0 then
+					return ""
+				end
 				if C_Engraving.IsInventorySlotEngravable(bag, slot) then
 					local rune_info = C_Engraving.GetRuneForInventorySlot(bag, slot)
 					if rune_info then

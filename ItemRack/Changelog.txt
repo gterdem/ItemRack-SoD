@@ -1,3 +1,6 @@
+__ New in 1.1.2 __
+- Fixed a Lua error that could appear alongside bank addons like Bagnator/Bagnon: hovering an equipment slot with the bank open threw "IsInventorySlotEngravable ... outside of expected range" on Season of Discovery. The rune scan now skips the bank's negative container indices (never engravable). No effect on non-engraving characters.
+
 __ New in 1.1.1 __
 - Added a small rune icon button to the Options window title bar (top-right, left of the close button, on every tab) that reopens the rune reminder for your currently equipped set; hidden on non-engraving characters.
 - Rune reminders ("Rune reminders on set equip") are now on by default (dormant unless you're on a Season of Discovery engraving character). Existing installs keep their saved setting.
