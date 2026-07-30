@@ -1170,6 +1170,10 @@ function ItemRack.ReflectMainScale(changing)
 			local framex = frame:GetLeft()*oldscale
 			local framey = frame:GetTop()*oldscale
 			frame:SetScale(scale)
+			-- a dragged button is left anchored to the screen by StopMovingOrSizing; adding a
+			-- UIParent anchor on top of that connects two anchor families, which the client
+			-- refuses since 9.0 ("SetPoint would result in anchor family connection")
+			frame:ClearAllPoints()
 			frame:SetPoint("TOPLEFT",UIParent,"BOTTOMLEFT",framex/scale,framey/scale)
 			ItemRackUser.Buttons[i].Left = framex/scale -- frame:GetLeft()
 			ItemRackUser.Buttons[i].Top = framey/scale -- frame:GetTop()

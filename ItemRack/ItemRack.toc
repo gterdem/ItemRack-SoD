@@ -1,7 +1,7 @@
 ## Interface: 11509
 ## Title: ItemRack - Season of Discovery
 ## IconTexture: Interface\AddOns\ItemRack\ItemRackIcon
-## Version: 1.1.2
+## Version: 1.1.3
 ## Author: Gello - Classic by Rottenbeer,Roadblock - Anniversary by Bl4ut0 - SoD fork by Valermus
 ## SavedVariables: ItemRackSettings, ItemRackEvents
 ## SavedVariablesPerCharacter: ItemRackUser

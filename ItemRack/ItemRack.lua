@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v1.1.2-20260726"
+ItemRack.BuildID = "v1.1.3-20260729"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
