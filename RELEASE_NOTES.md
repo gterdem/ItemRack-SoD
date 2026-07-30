@@ -1,10 +1,10 @@
-# ItemRack - Season of Discovery - Release v1.1.2
+# ItemRack - Season of Discovery - Release v1.1.3
 
-A compatibility bugfix for players using a bank addon (Bagnator, Bagnon, etc.).
+A bugfix for resizing the on-screen slot buttons.
 
 ---
 
 ### 🔧 Fixed
-* **Works alongside bank addons like Bagnator / Bagnon.** With such an addon installed, opening the bank and hovering an equipment slot could throw a Lua error (`IsInventorySlotEngravable ... outside of expected range`) on Season of Discovery. The rune scan now skips the bank's negative container indices — which are never engravable — so the item flyout builds cleanly with the bank open.
+* **Resizing moved slot buttons no longer throws a Lua error.** If you had dragged your on-screen slot buttons somewhere, using the **Scale** slider could spam `Action[SetPoint] failed because[SetPoint would result in anchor family connection]` — and only the first button actually resized, because the error stopped the resize before it reached the others. A dragged button is left anchored to the screen by the client, and the rescale added a UIParent anchor on top of that, which the client has refused since patch 9.0. Its anchors are now cleared before it is repositioned, so **every** button resizes and stays exactly where you put it.
 
-_Season of Discovery engraving fix; no effect on non-engraving characters._
+_Affects anyone who has moved their slot buttons away from the default position; no settings change needed._

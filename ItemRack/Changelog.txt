@@ -1,3 +1,6 @@
+__ New in 1.1.3 __
+- Fixed a Lua error when resizing on-screen slot buttons: dragging the Scale slider with buttons you had moved could spam "SetPoint would result in anchor family connection", and only the first button resized because the error stopped the loop. A dragged button is anchored to the screen, and the rescale added a UIParent anchor on top of that; its anchors are now cleared first, so every button resizes and keeps its position.
+
 __ New in 1.1.2 __
 - Fixed a Lua error that could appear alongside bank addons like Bagnator/Bagnon: hovering an equipment slot with the bank open threw "IsInventorySlotEngravable ... outside of expected range" on Season of Discovery. The rune scan now skips the bank's negative container indices (never engravable). No effect on non-engraving characters.
 

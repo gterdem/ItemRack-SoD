@@ -2,6 +2,11 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [1.1.3] - 2026-07-29
+
+### Fixed
+- **Resizing on-screen slot buttons no longer throws a Lua error.** Dragging the **Scale** slider with buttons you had moved around the screen could spam `Action[SetPoint] failed because[SetPoint would result in anchor family connection]`, and only the first button actually resized — the error stopped the resize loop before it reached the rest. A dragged button is left anchored to the screen by the client, and the rescale added a UIParent anchor on top of that, which the client has refused since 9.0. Its anchors are now cleared before it is repositioned, so every button resizes and stays where you put it.
+
 ## [1.1.2] - 2026-07-26
 
 ### Fixed
