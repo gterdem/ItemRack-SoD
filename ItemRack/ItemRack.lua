@@ -295,7 +295,8 @@ ItemRackSettings = {
 	LeftSlotsGoRightDefaultSet = true, -- whether the default has been set/migrated to ON to fix off-screen issue
 	RightSlotsGoLeft = "OFF", -- whether right-side character slots dock their menus to the LEFT instead of right
 	DisableAltClick = "OFF", -- whether to disable Alt+click from toggling auto queue (to allow self cast through)
-	TooltipColorUnEquipped = "OFF", -- whether to highlight unequipped set items in orange
+	TooltipColorUnEquipped = "ON", -- whether to highlight slots of the current set that no longer hold the set's item
+	TooltipShowSwappedItem = "OFF", -- whether those highlighted slots also name what's equipped there instead
 	DisableSwapSound = "OFF", -- whether to silence audio when ItemRack automatically swaps gear
 	ShowSetInTooltip = "OFF", -- whether to show set info in tooltips
 	DisableActionBarSound = "OFF", -- whether to silence Action Bar sounds
@@ -1283,6 +1284,7 @@ function ItemRack.InitCore()
 	ItemRackSettings.TinyTooltipsQuickAccess = ItemRackSettings.TinyTooltipsQuickAccess or "OFF"
 	ItemRackSettings.TinyTooltipsSubMenusOnly = ItemRackSettings.TinyTooltipsSubMenusOnly or "OFF"
 	ItemRackSettings.DisableTooltipsInCombat = ItemRackSettings.DisableTooltipsInCombat or "OFF"
+	ItemRackSettings.TooltipShowSwappedItem = ItemRackSettings.TooltipShowSwappedItem or "OFF"
 	ItemRackSettings.CharacterSheetMenusLeft = nil -- removed in 4.27.3, replaced with per-side toggles
 	
 	-- (Temporary?) function to update all queues to tables for 
@@ -3041,13 +3043,48 @@ function ItemRack.ShrinkTooltip(owner)
 	end
 end
 
+ItemRack.TooltipDeviations = {} -- reusable slot->equippedID map of slots that drifted from the set
+ItemRack.TooltipOrange = "FFFF8C00" -- color of a slot that no longer holds what the set asked for
+-- UTF-8 bytes for U+00BB (>>), written as escapes so the marker can't be mangled by re-encoding.
+-- Deliberately a Latin-1 character: the client's default fonts are not guaranteed to carry
+-- glyphs for fancier arrows.
+ItemRack.TooltipMarker = "\194\187"
+
 function ItemRack.SetTooltip(self,setname)
 	if ItemRackSettings.ShowTooltips ~= "ON" then return end
 	local set = setname and ItemRackUser.Sets[setname] and ItemRackUser.Sets[setname].equip
 	if set then
 		local itemName,itemColor
+		local orange = ItemRack.TooltipOrange
 		ItemRack.AnchorTooltip(self)
-		GameTooltip:AddLine(setname)
+
+		-- Work out which slots have drifted away from the set, using the very same comparison
+		-- IsSetEquipped uses so this can never contradict the set button's icon.
+		-- Only done for the set ItemRack believes you're wearing: on any other set every slot
+		-- would differ and the highlight would be meaningless noise.  CurrentSet is the right
+		-- anchor because it survives gear drift -- UpdateCurrentSet only swaps the button's
+		-- icon out for the generic one, it doesn't clear the name.
+		local deviated,changed = nil,0
+		if ItemRackSettings.TooltipColorUnEquipped=="ON" and setname==ItemRackUser.CurrentSet then
+			deviated = ItemRack.TooltipDeviations
+			wipe(deviated)
+			for i=0,19 do
+				if set[i] then
+					local match,equippedID = ItemRack.SlotMatchesSet(setname,set,i)
+					if not match then
+						deviated[i] = equippedID or 0
+						changed = changed + 1
+					end
+				end
+			end
+		end
+
+		if changed > 0 then
+			-- also explains why the button dropped back to the generic icon
+			GameTooltip:AddLine(setname.."  |c"..orange.."("..changed.." changed)|r")
+		else
+			GameTooltip:AddLine(setname)
+		end
 		if ItemRackSettings.TinyTooltips~="ON" then
 			for i=0,19 do
 				if set[i] then
@@ -3059,12 +3096,23 @@ function ItemRack.SetTooltip(self,setname)
 							else
 								itemColor = "FF4C80FF"
 							end
-						elseif itemName~="(empty)" and ItemRackSettings.TooltipColorUnEquipped=="ON" and not ItemRack.SameExactID(ItemRack.GetID(i), set[i]) then
-							itemColor = "FFFF8C00"
+						elseif itemName~="(empty)" and deviated and deviated[i] then
+							itemColor = orange
 						else
 							itemColor = "FFAAAAAA"
 						end
-						GameTooltip:AddLine("|cFFFFFFFF"..ItemRack.SlotInfo[i].real..": |c"..itemColor..itemName)
+						local line = "|cFFFFFFFF"..ItemRack.SlotInfo[i].real..": |c"..itemColor..itemName
+						if deviated and deviated[i] then
+							-- marker as well as color, so the signal doesn't rest on hue alone
+							line = "|c"..orange..ItemRack.TooltipMarker.."|r "..line
+							if ItemRackSettings.TooltipShowSwappedItem=="ON" then
+								GameTooltip:AddDoubleLine(line,"|c"..orange.."now: "..(ItemRack.GetInfoByID(deviated[i]) or "(empty)").."|r")
+							else
+								GameTooltip:AddLine(line)
+							end
+						else
+							GameTooltip:AddLine(line)
+						end
 					end
 				end
 			end
@@ -3869,6 +3917,7 @@ function ItemRack.SlashHandler(arg1)
 				{ name = "ItemRackSettings.ShowTooltips", val = ItemRackSettings.ShowTooltips },
 				{ name = "ItemRackSettings.ShowSetInTooltip", val = ItemRackSettings.ShowSetInTooltip },
 				{ name = "ItemRackSettings.TooltipColorUnEquipped", val = ItemRackSettings.TooltipColorUnEquipped },
+				{ name = "ItemRackSettings.TooltipShowSwappedItem", val = ItemRackSettings.TooltipShowSwappedItem },
 				{ name = "ItemRackSettings.TinyTooltips", val = ItemRackSettings.TinyTooltips },
 				{ name = "ItemRackSettings.TinyTooltipsQuickAccess", val = ItemRackSettings.TinyTooltipsQuickAccess },
 				{ name = "ItemRackSettings.TinyTooltipsSubMenusOnly", val = ItemRackSettings.TinyTooltipsSubMenusOnly },

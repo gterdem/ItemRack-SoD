@@ -2,6 +2,16 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [Development]
+
+### Added
+- **The set tooltip now tells you which slot changed.** When a piece of the set you're wearing gets swapped out, the set button drops back to its generic icon — but until now nothing said *which* slot drifted. The tooltip of your current set now counts the deviating slots next to the set name (`Shockadin (1 changed)`) and marks each one with an orange `»`. Controlled by the renamed **"Highlight changed slots in tooltip"** option, now on by default for new installs; existing installs keep whatever they had set.
+- **Optional "Show what's equipped instead"** sub-option: each highlighted slot also names the item you're actually wearing there (`now: Lawbringer Helm`), so you can see what it changed to and not just where. Off by default because it widens the tooltip.
+
+### Fixed
+- **The tooltip highlight no longer flags slots that are correctly equipped.** It compared items by exact identity (item + enchant + gems + suffix) while the set button's icon uses looser base-item matching and deliberately tolerates rings swapped between the two ring slots, trinkets swapped between the two trinket slots, and items an active auto-queue put there. A re-enchanted piece or a pair of swapped rings would therefore be painted orange while ItemRack still considered the set fully equipped. Both now share one comparison (`ItemRack.SlotMatchesSet`), so the tooltip can no longer contradict the icon.
+- **The highlight no longer fires on sets you aren't wearing.** It applied to every set in the quick menu, where by definition nearly every slot differs and all 19 lines turned orange. It is now limited to your current set.
+
 ## [1.1.3] - 2026-07-29
 
 ### Fixed
