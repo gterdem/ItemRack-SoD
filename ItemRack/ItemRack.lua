@@ -39,7 +39,7 @@ local GetNumAddOns = GetNumAddOns or (C_AddOns and C_AddOns.GetNumAddOns)
 
 local wowver, wowbuild, wowbuilddate, wowtoc = GetBuildInfo()
 ItemRack.Version = GetAddOnMetadata(addonName, "Version")
-ItemRack.BuildID = "v1.1.3-20260729"
+ItemRack.BuildID = "v1.2.0-20260820"
 
 -- Global Debug System
 -- Usage: ItemRack.Debug("Queue", "some message", someVar)
@@ -296,6 +296,7 @@ ItemRackSettings = {
 	RightSlotsGoLeft = "OFF", -- whether right-side character slots dock their menus to the LEFT instead of right
 	DisableAltClick = "OFF", -- whether to disable Alt+click from toggling auto queue (to allow self cast through)
 	TooltipColorUnEquipped = "ON", -- whether to highlight slots of the current set that no longer hold the set's item
+	TooltipColorUnEquippedDefaultSet = true, -- whether the 1.2.0 one-time switch-on has been applied
 	TooltipShowSwappedItem = "OFF", -- whether those highlighted slots also name what's equipped there instead
 	DisableSwapSound = "OFF", -- whether to silence audio when ItemRack automatically swaps gear
 	ShowSetInTooltip = "OFF", -- whether to show set info in tooltips
@@ -1146,19 +1147,37 @@ do
 			return
 		end
 		if not id or id == 0 then return end
-		local same_exact = ItemRack.SameExactID
+		-- Base itemID, not exact identity.  This answers "which of my sets use this item", and
+		-- ItemRack.FindItem already falls back to a base-ID match when locating gear to equip, so
+		-- an exact comparison here claimed an item wasn't in any set while EquipSet would happily
+		-- equip it -- re-enchant a set piece and its tooltip went quiet.  Matches how the set
+		-- tooltip compares slots (ItemRack.SlotMatchesSet) as of 1.2.0.
+		local same_base = ItemRack.SameID
 		for name, set in pairs(ItemRackUser.Sets) do
 			if not name:match("^~") then
 				for _, item in pairs(set.equip) do
-					if same_exact(item, id) then
+					if item and item ~= 0 and same_base(item, id) then
 						data[name] = true
 					end
 				end
 			end
 		end
+		local added = false
 		for name in pairs(data) do
 			tooltip:AddDoubleLine("ItemRack Set: ", name, 0,.6,1, 0,.6,1)
 			data[name] = nil
+			added = true
+		end
+		if added then
+			-- We're in a post-hook of SetBagItem/SetInventoryItem/SetHyperlink, so the tooltip has
+			-- already been laid out and shown by the time these lines are appended -- the frame has
+			-- no idea it needs to grow.  Left alone, the new lines are clipped at the bottom edge
+			-- (whether they happen to fit depends on slack left over from the previously displayed
+			-- tooltip, which is why it looks intermittent), and AddDoubleLine positions its right
+			-- column against the stale width, so the set name can land on top of the label.
+			-- Show() forces the recalculation.  Every other ItemRack tooltip path already ends in
+			-- a Show() for this reason; this one was the outlier.
+			tooltip:Show()
 		end
 	end
 end
@@ -1285,6 +1304,15 @@ function ItemRack.InitCore()
 	ItemRackSettings.TinyTooltipsSubMenusOnly = ItemRackSettings.TinyTooltipsSubMenusOnly or "OFF"
 	ItemRackSettings.DisableTooltipsInCombat = ItemRackSettings.DisableTooltipsInCombat or "OFF"
 	ItemRackSettings.TooltipShowSwappedItem = ItemRackSettings.TooltipShowSwappedItem or "OFF"
+	-- 1.2.0: changed-slot highlighting now defaults on.  It shipped off and buried in the option
+	-- list, so an existing "OFF" is almost always the old default rather than a deliberate choice
+	-- -- and until 1.2.0 the feature flagged correctly-equipped slots and lit up every set in the
+	-- quick menu, so leaving it off was reasonable.  Switch existing installs on exactly once;
+	-- the flag makes a later untick stick.
+	if not ItemRackSettings.TooltipColorUnEquippedDefaultSet then
+		ItemRackSettings.TooltipColorUnEquipped = "ON"
+		ItemRackSettings.TooltipColorUnEquippedDefaultSet = true
+	end
 	ItemRackSettings.CharacterSheetMenusLeft = nil -- removed in 4.27.3, replaced with per-side toggles
 	
 	-- (Temporary?) function to update all queues to tables for 
