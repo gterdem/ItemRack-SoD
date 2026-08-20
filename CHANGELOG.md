@@ -2,15 +2,19 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
-## [Development]
+## [1.2.0] - 2026-08-19
 
 ### Added
-- **The set tooltip now tells you which slot changed.** When a piece of the set you're wearing gets swapped out, the set button drops back to its generic icon — but until now nothing said *which* slot drifted. The tooltip of your current set now counts the deviating slots next to the set name (`Shockadin (1 changed)`) and marks each one with an orange `»`. Controlled by the renamed **"Highlight changed slots in tooltip"** option, now on by default for new installs; existing installs keep whatever they had set.
+- **The set tooltip now tells you which slot changed.** When a piece of the set you're wearing gets swapped out, the set button drops back to its generic icon — but until now nothing said *which* slot drifted. The tooltip of your current set now counts the deviating slots next to the set name (`Shockadin (1 changed)`) and marks each one with an orange `»`.
 - **Optional "Show what's equipped instead"** sub-option: each highlighted slot also names the item you're actually wearing there (`now: Lawbringer Helm`), so you can see what it changed to and not just where. Off by default because it widens the tooltip.
 
+### Changed
+- **"Highlight unequipped in tooltip" is now "Highlight changed slots in tooltip", and is on by default.** It was off by default and buried in the options list, so most people never knew the feature existed — and with the two bugs below fixed, it's now useful enough to be worth showing everyone. Existing installs are switched on once; untick it and your choice sticks from then on.
+
 ### Fixed
-- **The tooltip highlight no longer flags slots that are correctly equipped.** It compared items by exact identity (item + enchant + gems + suffix) while the set button's icon uses looser base-item matching and deliberately tolerates rings swapped between the two ring slots, trinkets swapped between the two trinket slots, and items an active auto-queue put there. A re-enchanted piece or a pair of swapped rings would therefore be painted orange while ItemRack still considered the set fully equipped. Both now share one comparison (`ItemRack.SlotMatchesSet`), so the tooltip can no longer contradict the icon.
+- **The tooltip highlight no longer flags slots that are correctly equipped.** It compared items by exact identity (item + enchant + gems + suffix) while the set button's icon uses looser base-item matching and deliberately tolerates rings swapped between the two ring slots, trinkets swapped between the two trinket slots, and items an active auto-queue put there. A re-enchanted weapon or a pair of swapped rings would therefore be painted orange while ItemRack still considered the set fully equipped. Both now share one comparison (`ItemRack.SlotMatchesSet`), so the tooltip can no longer contradict the icon.
 - **The highlight no longer fires on sets you aren't wearing.** It applied to every set in the quick menu, where by definition nearly every slot differs and all 19 lines turned orange. It is now limited to your current set.
+- **The rune reminder no longer invents mismatches right after a set swap.** Equipping a set could pop a reminder claiming several runes differed — listing the runes of the gear you just took *off* — when re-checking immediately afterward reported the correct, much shorter list. The check ran in the same frame the swaps were issued, before the new pieces had landed in their slots, so it read the outgoing items' runes. It now waits for the gear to settle, and an open reminder re-scans as each piece arrives: `RUNE_UPDATED` does not fire on equip/unequip, so a reminder built from stale data could never correct itself before.
 
 ## [1.1.3] - 2026-07-29
 

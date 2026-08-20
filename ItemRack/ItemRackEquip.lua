@@ -640,11 +640,22 @@ function ItemRack.EndSetSwap(setname)
 			-- Season of Discovery: if the equipped set's saved runes differ from what's
 			-- engraved, show a reminder with a click-to-apply button (opt-in; off by default).
 			-- Suppressed in combat (can't engrave then); use /itemrack runes afterward.
-			if ItemRackSettings.RunesWithSet=="ON" and not InCombatLockdown() and ItemRack.IsEngravingActive() and ItemRack.ShowRuneReminder then
-				local runeMismatches = ItemRack.GetRuneMismatches(setname)
-				if runeMismatches and #runeMismatches > 0 then
-					ItemRack.ShowRuneReminder(setname, runeMismatches)
-				end
+			--
+			-- Deferred, and re-scanned when it fires.  EndSetSwap runs in the same frame that
+			-- IterateSwapList *issued* the swaps, so the new pieces have not landed in their
+			-- equipment slots yet.  C_Engraving.GetRuneForEquipmentSlot reports the rune of
+			-- whatever currently occupies the slot, so scanning now reads the OUTGOING gear and
+			-- invents mismatches for every engravable slot the set touches.  Same race the set
+			-- icon dodges with C_Timer.After above -- given a wrong popup here lists actions
+			-- rather than just showing a stale icon, it gets a longer settle.
+			if ItemRackSettings.RunesWithSet=="ON" and ItemRack.IsEngravingActive() and ItemRack.ShowRuneReminder then
+				C_Timer.After(1, function()
+					if InCombatLockdown() then return end
+					local runeMismatches = ItemRack.GetRuneMismatches(setname)
+					if runeMismatches and #runeMismatches > 0 then
+						ItemRack.ShowRuneReminder(setname, runeMismatches)
+					end
+				end)
 			end
 		elseif ItemRackUser.Sets[setname].oldset then
 			-- Internal set (e.g. ~Unequip, ~CombatQueue) finished restoring gear.
