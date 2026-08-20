@@ -139,11 +139,19 @@ local function EnsureFrame()
 	f.close:SetScript("OnClick", function() f:Hide() end)
 
 	-- RUNE_UPDATED fires when an engrave completes -> refresh instantly (no guessed delay).
+	-- It explicitly does NOT fire on equip/unequip, so it cannot correct a reminder that was
+	-- built while a set swap was still landing.  UNIT_INVENTORY_CHANGED covers that: each piece
+	-- arriving re-scans the runes, so the list shrinks to the truth instead of staying wrong.
+	-- (It doesn't fire for rings/trinkets, which are not engravable anyway.)
 	-- PLAYER_REGEN_* keep the Apply button's combat state in sync.
 	f:RegisterEvent("RUNE_UPDATED")
+	f:RegisterEvent("UNIT_INVENTORY_CHANGED")
 	f:RegisterEvent("PLAYER_REGEN_ENABLED")
 	f:RegisterEvent("PLAYER_REGEN_DISABLED")
-	f:SetScript("OnEvent", function() ItemRack.RefreshRuneReminder() end)
+	f:SetScript("OnEvent", function(self, event, unit)
+		if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
+		ItemRack.RefreshRuneReminder()
+	end)
 
 	f:Hide()
 	runeFrame = f

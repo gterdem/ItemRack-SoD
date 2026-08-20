@@ -640,11 +640,22 @@ function ItemRack.EndSetSwap(setname)
 			-- Season of Discovery: if the equipped set's saved runes differ from what's
 			-- engraved, show a reminder with a click-to-apply button (opt-in; off by default).
 			-- Suppressed in combat (can't engrave then); use /itemrack runes afterward.
-			if ItemRackSettings.RunesWithSet=="ON" and not InCombatLockdown() and ItemRack.IsEngravingActive() and ItemRack.ShowRuneReminder then
-				local runeMismatches = ItemRack.GetRuneMismatches(setname)
-				if runeMismatches and #runeMismatches > 0 then
-					ItemRack.ShowRuneReminder(setname, runeMismatches)
-				end
+			--
+			-- Deferred, and re-scanned when it fires.  EndSetSwap runs in the same frame that
+			-- IterateSwapList *issued* the swaps, so the new pieces have not landed in their
+			-- equipment slots yet.  C_Engraving.GetRuneForEquipmentSlot reports the rune of
+			-- whatever currently occupies the slot, so scanning now reads the OUTGOING gear and
+			-- invents mismatches for every engravable slot the set touches.  Same race the set
+			-- icon dodges with C_Timer.After above -- given a wrong popup here lists actions
+			-- rather than just showing a stale icon, it gets a longer settle.
+			if ItemRackSettings.RunesWithSet=="ON" and ItemRack.IsEngravingActive() and ItemRack.ShowRuneReminder then
+				C_Timer.After(1, function()
+					if InCombatLockdown() then return end
+					local runeMismatches = ItemRack.GetRuneMismatches(setname)
+					if runeMismatches and #runeMismatches > 0 then
+						ItemRack.ShowRuneReminder(setname, runeMismatches)
+					end
+				end)
 			end
 		elseif ItemRackUser.Sets[setname].oldset then
 			-- Internal set (e.g. ~Unequip, ~CombatQueue) finished restoring gear.
@@ -716,78 +727,86 @@ function ItemRack.MoveItem(fromBag,fromSlot,toBag,toSlot)
 	end
 end
 
+-- returns whether whatever is currently in inventory slot 'slot' satisfies set[slot], plus the
+-- ItemRack-style ID of the item actually equipped there (0 for an empty slot).
+-- This is the single source of truth for "is this slot still what the set asked for": both
+-- ItemRack.IsSetEquipped (which decides whether the set button keeps the set's icon) and
+-- ItemRack.SetTooltip (which highlights deviating slots) go through it, so the tooltip can
+-- never contradict the icon.  Loose base-itemID matching, ring 11/12 and trinket 13/14
+-- cross-slot tolerance, and the auto-queue allowance all live here.
+function ItemRack.SlotMatchesSet(setname,set,slot,exact)
+	local same = ItemRack.SameID
+	local id = ItemRack.GetID(slot)
+	local match = false
+
+	if (exact and set[slot]==id) or (not exact and same(set[slot],id)) then
+		match = true
+	elseif not exact then
+		-- Try cross-slot check for Rings (11/12)
+		if (slot==11 or slot==12) and set[11] and set[12] then
+			local otherID = ItemRack.GetID(slot==11 and 12 or 11)
+			if same(set[slot], otherID) then match = true end
+		-- Try cross-slot check for Trinkets (13/14)
+		elseif (slot==13 or slot==14) and set[13] and set[14] then
+			local otherID = ItemRack.GetID(slot==13 and 14 or 13)
+			if same(set[slot], otherID) then match = true end
+		end
+	end
+
+	-- If auto-queues are globally enabled and this slot has an active
+	-- queue, accept whichever queued item is intentionally active for
+	-- this set context. Dormant queue settings must not make an unchanged
+	-- equipment set appear as "Custom".
+	local slotQueue = ItemRack.GetQueues(setname)[slot]
+	if ItemRackUser.EnableQueues == "ON" and slotQueue and #slotQueue > 0 and ItemRack.GetQueuesEnabled(setname)[slot] then
+		local currentBaseID = ItemRack.GetIRString(id,true)
+		local currentCustomTime
+		local currentInQueue = false
+		if currentBaseID and currentBaseID ~= 0 then
+			for q=1,#slotQueue do
+				if slotQueue[q].id == 0 then
+					break
+				end
+				local queueBaseID = ItemRack.GetIRString(slotQueue[q].id,true)
+				if ItemRack.SameExactID(slotQueue[q].id, id) or queueBaseID == currentBaseID then
+					currentInQueue = true
+					currentCustomTime = slotQueue[q].swapInEnabled and slotQueue[q].swapIn or nil
+					break
+				end
+			end
+			local start,duration,enable = GetInventoryItemCooldown("player",slot)
+			local ready = ItemRack.ItemNearReady(currentBaseID, slot, currentCustomTime)
+			local active = ItemRack.AutoQueueItemToEquip(slot, currentBaseID, enable, ready, setname)
+			if currentInQueue then
+				match = not active or same(active, id)
+			elseif match and active and not same(active, id) then
+				match = false
+			end
+		elseif match then
+			match = false
+		end
+	end
+
+	return match, id
+end
+
 function ItemRack.IsSetEquipped(setname,exact)
 	if setname and ItemRackUser.Sets[setname] then
 		local set = ItemRackUser.Sets[setname].equip
-		local id
-		local same = ItemRack.SameID
-		
-		-- Special handling for Trinkets and Rings to allow swapped slots
-		local check11_12 = (set[11] and set[12])
-		local check13_14 = (set[13] and set[14])
-		
+
 		local anyChecked = false
 		for i in pairs(set) do
 			if type(i) == "number" then
 				anyChecked = true
-				id = ItemRack.GetID(i)
-				local match = false
-				
-				if (exact and set[i]==id) or (not exact and same(set[i],id)) then
-					match = true
-				elseif not exact then
-					-- Try cross-slot check for Rings (11/12)
-					if (i==11 or i==12) and check11_12 then
-						local otherID = ItemRack.GetID(i==11 and 12 or 11)
-						if same(set[i], otherID) then match = true end
-					-- Try cross-slot check for Trinkets (13/14)
-					elseif (i==13 or i==14) and check13_14 then
-						local otherID = ItemRack.GetID(i==13 and 14 or 13)
-						if same(set[i], otherID) then match = true end
-					end
-				end
-				
-				-- If auto-queues are globally enabled and this slot has an active
-				-- queue, accept whichever queued item is intentionally active for
-				-- this set context. Dormant queue settings must not make an unchanged
-				-- equipment set appear as "Custom".
-				local slotQueue = ItemRack.GetQueues(setname)[i]
-				if ItemRackUser.EnableQueues == "ON" and slotQueue and #slotQueue > 0 and ItemRack.GetQueuesEnabled(setname)[i] then
-					local currentBaseID = ItemRack.GetIRString(id,true)
-					local currentCustomTime
-					local currentInQueue = false
-					if currentBaseID and currentBaseID ~= 0 then
-						for q=1,#slotQueue do
-							if slotQueue[q].id == 0 then
-								break
-							end
-							local queueBaseID = ItemRack.GetIRString(slotQueue[q].id,true)
-							if ItemRack.SameExactID(slotQueue[q].id, id) or queueBaseID == currentBaseID then
-								currentInQueue = true
-								currentCustomTime = slotQueue[q].swapInEnabled and slotQueue[q].swapIn or nil
-								break
-							end
-						end
-						local start,duration,enable = GetInventoryItemCooldown("player",i)
-						local ready = ItemRack.ItemNearReady(currentBaseID, i, currentCustomTime)
-						local active = ItemRack.AutoQueueItemToEquip(i, currentBaseID, enable, ready, setname)
-						if currentInQueue then
-							match = not active or same(active, id)
-						elseif match and active and not same(active, id) then
-							match = false
-						end
-					elseif match then
-						match = false
-					end
-				end
-				
+				local match,id = ItemRack.SlotMatchesSet(setname,set,i,exact)
+
 				if not match then
 					ItemRack.Debug("Equip", "IsSetEquipped mismatch: set="..tostring(setname).." slot="..tostring(i).." expected="..tostring(set[i]).." equipped="..tostring(id).." queues="..tostring(ItemRackUser.EnableQueues))
 					return false
 				end
 			end
 		end
-		
+
 		return anyChecked
 	end
 end
