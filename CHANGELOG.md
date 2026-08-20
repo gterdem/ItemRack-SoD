@@ -2,6 +2,11 @@
 
 All notable changes to the Season of Discovery fork of ItemRack are documented in this file.
 
+## [Development]
+
+### Fixed
+- **The rune reminder no longer invents mismatches right after a set swap.** Equipping a set could pop a reminder claiming several runes differed (listing the runes of the gear you just took *off*), when re-checking with `/itemrack runes` immediately afterward reported the correct, much shorter list. The check ran in the same frame the swaps were issued, before the new pieces had landed in their slots, so it read the outgoing items' runes. It now waits for the gear to settle, and an open reminder re-scans as each piece arrives — `RUNE_UPDATED` does not fire on equip/unequip, so it could never correct itself before.
+
 ## [1.1.3] - 2026-07-29
 
 ### Fixed
