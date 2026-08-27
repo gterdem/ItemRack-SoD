@@ -1132,6 +1132,11 @@ function ItemRack.OnSetBagItem(tooltip, bag, slot)
 end
 
 function ItemRack.OnSetInventoryItem(tooltip, unit, inv_slot)
+	-- Inspecting another player routes their gear through this same SetInventoryItem path,
+	-- but ItemRack.GetID(inv_slot) only ever reads the *player's* own inventory -- so an
+	-- inspect tooltip listed the sets containing your item in that slot, next to someone
+	-- else's item.  Only annotate the player's own equipment.
+	if not unit or not UnitIsUnit(unit, "player") then return end
 	ItemRack.ListSetsHavingItem(tooltip, ItemRack.GetID(inv_slot))
 end
 
